@@ -64,7 +64,7 @@ class SearchBooks extends Component {
         {this.state.books.map(book => (
           <Book 
           booktitle={book.volumeInfo.title}
-          bookimage={book.volumeInfo.imageLinks.thumbnail}
+          bookimage={book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/SNice.svg/1920px-SNice.svg.png"} 
           bookauthors={book.volumeInfo.authors}
           bookdescription={book.volumeInfo.description}
           booklink={book.volumeInfo.canonicalVolumeLink}

@@ -6,62 +6,77 @@ import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
 import { Input, TextArea, FormBtn } from "../components/Form";
+import SavedBook from "../components/SavedBook"
 
 class SavedBooks extends Component {
+
   state = {
     books: [],
-    title: "",
-    author: "",
-    synopsis: ""
   };
 
-  componentDidMount() {
-    this.loadBooks();
+  myCallback = (dataFromChild) => {
+    let tempbook = [];
+    API.deleteBook(dataFromChild).then(res => {
+      tempbook = this.state.books.filter(book => book._id !== dataFromChild)
+      this.setState({books: tempbook})
+
+
+    })
   }
 
-  loadBooks = () => {
-    API.getBooks()
-      .then(res =>
-        this.setState({ books: res.data, title: "", author: "", synopsis: "" })
-      )
-      .catch(err => console.log(err));
-  };
-
-  deleteBook = id => {
-    API.deleteBook(id)
-      .then(res => this.loadBooks())
-      .catch(err => console.log(err));
-  };
-
   handleInputChange = event => {
+    // Pull the name and value properties off of the event.target (the element which triggered the event)
     const { name, value } = event.target;
+    // Set the state for the appropriate input field
     this.setState({
       [name]: value
     });
   };
 
-  handleFormSubmit = event => {
-    event.preventDefault();
-    if (this.state.title && this.state.author) {
-      API.saveBook({
-        title: this.state.title,
-        author: this.state.author,
-        synopsis: this.state.synopsis
+  componentDidMount(){
+    this.loadBooks();
+  }
+
+  loadBooks = () => {
+    API.getBooks()
+      .then(res => {
+        let newarr = [];
+        this.setState({ books: [] })
+        console.log("Function was run")
+        console.log(this.state.books)
+        for (let i = 0; i < res.data.length; i++) {
+          newarr.push(res.data[i])
+        }
+        this.setState({books: newarr})
       })
-        .then(res => this.loadBooks())
-        .catch(err => console.log(err));
-    }
+      .catch(err => console.log(err));
   };
 
   render() {
     return (
-      <Container fluid>
-            <Jumbotron>
-              <h1>Saved Books</h1>
+      <Container fluid >
+        <Row>
+          <Col size="md-12">
+            <Jumbotron >
+              <div className="h1" >Saved Books</div>
+              <br></br>
             </Jumbotron>
-      </Container>
+          </Col>
+        </Row>
+        {this.state.books.map(book => (
+          <SavedBook
+          callbackFromParent={this.myCallback}
+          identifier={book._id}
+          booktitle={book.title}
+          bookimage={book.image}
+          bookauthors={book.authors}
+          bookdescription={book.description}
+          booklink={book.link}
+           />
+        ))}
+      </Container >
     );
-  }
+  };
 }
 
 export default SavedBooks;

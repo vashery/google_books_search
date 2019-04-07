@@ -5,7 +5,7 @@ import API from "../../utils/API";
 
 // The ...props means, spread all of the passed props onto this element
 // That way we don't have to define them all individually
-class DeleteBtn extends Component {
+class SavedBook extends Component {
     state = {
         added: false
     }
@@ -20,21 +20,18 @@ class DeleteBtn extends Component {
         margin: '10px'
     };
 
-    handleDelete = event => {
-            API.deleteBook(this.params.id)
-                .then(res => {
-                    this.setState({added: true})
-                })
-                .catch(err => console.log(err));
+
+    handleDelete = () => {
+        this.props.callbackFromParent(this.props.identifier)
         }
-    }
+        
     render() {
         return (
             <div>
                 <Card>
                     <Card.Header>
                         {this.props.booktitle}
-                        <Button onClick={this.handleAdd} className="float-right" variant="outline-secondary" style={this.buttonstyle} >{this.state.added ? 'Added' : 'Add'}</Button>
+                        <Button identifier={this.props.identifier} onClick={this.handleDelete} className="float-right" variant="outline-secondary" style={this.buttonstyle} >Delete</Button>
                         <Button href={this.props.booklink} className="float-right" variant="outline-secondary" style={this.buttonstyle} >View </Button>
                     </Card.Header>
                     <Card.Body>
@@ -55,4 +52,4 @@ class DeleteBtn extends Component {
     }
 }
 
-export default DeleteBtn;
+export default SavedBook;
